@@ -1,0 +1,14 @@
+{
+  "addons": [
+    { "name": "tcxGPT",    "url": "https://github.com/TrussC-org/tcxGPT" },
+    { "name": "tcxOpenCV", "url": "https://github.com/TrussC-org/tcxOpenCV" },
+    { "name": "tcxAruco",  "url": "https://github.com/TrussC-org/tcxAruco" },
+    { "name": "tcxNDI",    "url": "https://github.com/TrussC-org/tcxNDI" },
+    { "name": "tcxTcv",    "url": "https://github.com/TrussC-org/tcxTcv" },
+    { "name": "tcxIME",    "url": "https://github.com/tettou771/tcxIME" },
+    { "name": "tcxExiv2",  "url": "https://github.com/tettou771/tcxExiv2" },
+    { "name": "tcxLibRaw", "url": "https://github.com/tettou771/tcxLibRaw" },
+    { "name": "tcxCrow",   "url": "https://github.com/tettou771/tcxCrow" },
+    { "name": "tcxPave",   "url": "https://github.com/tettou771/tcxPave" }
+  ]
+}

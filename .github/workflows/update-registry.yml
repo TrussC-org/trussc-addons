@@ -1,0 +1,83 @@
+name: Update Registry
+
+on:
+  push:
+    branches: [main]
+    paths: [addons_list.json]
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build registry.json
+        run: |
+          echo "Fetching addon metadata..."
+          REGISTRY='{"last_updated":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","addons":['
+          FIRST=true
+
+          # Read each addon from addons_list.json
+          for row in $(jq -c '.addons[]' addons_list.json); do
+            NAME=$(echo "$row" | jq -r '.name')
+            URL=$(echo "$row" | jq -r '.url')
+
+            echo "  Checking $NAME ($URL) ..."
+
+            # Try to fetch tcAddon.json from the default branch
+            RAW_URL="${URL}/raw/HEAD/tcAddon.json"
+            METADATA=$(curl -sf "$RAW_URL" || echo '{}')
+
+            # Extract fields (fall back to addons_list.json values)
+            VERSION=$(echo "$METADATA" | jq -r '.version // "unknown"')
+            DESCRIPTION=$(echo "$METADATA" | jq -r '.description // ""')
+            AUTHOR=$(echo "$METADATA" | jq -r '.author // ""')
+            LICENSE=$(echo "$METADATA" | jq -r '.license // ""')
+            TC_VERSION=$(echo "$METADATA" | jq -r '.trussc_version // ""')
+
+            # Build entry
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+            else
+              REGISTRY="$REGISTRY,"
+            fi
+            ENTRY=$(jq -nc \
+              --arg name "$NAME" \
+              --arg url "${URL}.git" \
+              --arg version "$VERSION" \
+              --arg description "$DESCRIPTION" \
+              --arg author "$AUTHOR" \
+              --arg license "$LICENSE" \
+              --arg trussc_version "$TC_VERSION" \
+              '{name:$name, url:$url, version:$version, description:$description, author:$author, license:$license, trussc_version:$trussc_version}')
+            REGISTRY="$REGISTRY$ENTRY"
+          done
+
+          REGISTRY="$REGISTRY]}"
+
+          # Pretty-print
+          echo "$REGISTRY" | jq '.' > registry.json
+          echo ""
+          echo "Generated registry.json with $(jq '.addons | length' registry.json) addons"
+          cat registry.json
+
+      - name: Deploy to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create orphan gh-pages branch with only registry.json
+          git checkout --orphan gh-pages-tmp
+          git rm -rf .
+          mv registry.json .
+          git add registry.json
+          git commit -m "Update registry $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push origin gh-pages-tmp:gh-pages --force
+
+          echo "Deployed to gh-pages"
