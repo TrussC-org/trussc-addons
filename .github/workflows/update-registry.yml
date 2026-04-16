@@ -72,10 +72,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # Save registry.json outside the worktree before switching branches
+          cp registry.json /tmp/registry.json
+
           # Create orphan gh-pages branch with only registry.json
           git checkout --orphan gh-pages-tmp
           git rm -rf .
-          mv registry.json .
+          cp /tmp/registry.json registry.json
           git add registry.json
           git commit -m "Update registry $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push origin gh-pages-tmp:gh-pages --force
