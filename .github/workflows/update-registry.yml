@@ -22,23 +22,38 @@ jobs:
           REGISTRY='{"last_updated":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","addons":['
           FIRST=true
 
-          # Read each addon from addons_list.json
           for row in $(jq -c '.addons[]' addons_list.json); do
             NAME=$(echo "$row" | jq -r '.name')
             URL=$(echo "$row" | jq -r '.url')
 
             echo "  Checking $NAME ($URL) ..."
 
-            # Try to fetch tcAddon.json from the default branch
-            RAW_URL="${URL}/raw/HEAD/tcAddon.json"
+            # Fetch addon.json from default branch (all fields optional)
+            RAW_URL="${URL}/raw/HEAD/addon.json"
             METADATA=$(curl -sf "$RAW_URL" || echo '{}')
 
-            # Extract fields (fall back to addons_list.json values)
-            VERSION=$(echo "$METADATA" | jq -r '.version // "unknown"')
+            # Extract fields from addon.json (version is the developer's self-reported value)
+            VERSION=$(echo "$METADATA" | jq -r '.version // ""')
             DESCRIPTION=$(echo "$METADATA" | jq -r '.description // ""')
             AUTHOR=$(echo "$METADATA" | jq -r '.author // ""')
             LICENSE=$(echo "$METADATA" | jq -r '.license // ""')
             TC_VERSION=$(echo "$METADATA" | jq -r '.trussc_version // ""')
+            SCREENSHOT=$(echo "$METADATA" | jq -r '.screenshot // ""')
+            KEYWORDS=$(echo "$METADATA" | jq -c '.keywords // []')
+
+            # Resolve relative screenshot path to absolute URL
+            if [ -n "$SCREENSHOT" ] && [[ ! "$SCREENSHOT" =~ ^https?:// ]]; then
+              SCREENSHOT="${URL}/raw/HEAD/${SCREENSHOT}"
+            fi
+
+            # Get latest git tag as a separate field
+            LATEST_TAG=$(git ls-remote --tags --sort=-v:refname "$URL" 2>/dev/null \
+              | head -1 | sed 's/.*refs\/tags\///' | sed 's/\^{}//')
+
+            # If addon.json has no version, fall back to latest tag
+            if [ -z "$VERSION" ]; then
+              VERSION="${LATEST_TAG:-unknown}"
+            fi
 
             # Build entry
             if [ "$FIRST" = true ]; then
@@ -50,17 +65,20 @@ jobs:
               --arg name "$NAME" \
               --arg url "${URL}.git" \
               --arg version "$VERSION" \
+              --arg latest_tag "$LATEST_TAG" \
               --arg description "$DESCRIPTION" \
               --arg author "$AUTHOR" \
               --arg license "$LICENSE" \
               --arg trussc_version "$TC_VERSION" \
-              '{name:$name, url:$url, version:$version, description:$description, author:$author, license:$license, trussc_version:$trussc_version}')
+              --arg screenshot "$SCREENSHOT" \
+              --argjson keywords "$KEYWORDS" \
+              '{name:$name, url:$url, version:$version, latest_tag:$latest_tag, description:$description, author:$author, license:$license, trussc_version:$trussc_version, screenshot:$screenshot, keywords:$keywords}')
             REGISTRY="$REGISTRY$ENTRY"
           done
 
           REGISTRY="$REGISTRY]}"
 
-          # Pretty-print
+          # Pretty-print and strip empty fields for cleaner output
           echo "$REGISTRY" | jq '.' > registry.json
           echo ""
           echo "Generated registry.json with $(jq '.addons | length' registry.json) addons"
@@ -71,10 +89,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Save registry.json outside the worktree before switching branches
           cp registry.json /tmp/registry.json
 
-          # Create orphan gh-pages branch with only registry.json
           git checkout --orphan gh-pages-tmp
           git rm -rf .
           cp /tmp/registry.json registry.json
