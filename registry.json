@@ -1,0 +1,125 @@
+{
+  "last_updated": "2026-04-27T08:09:15Z",
+  "addons": [
+    {
+      "name": "tcxGPT",
+      "url": "https://github.com/TrussC-org/tcxGPT.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxOpenCV",
+      "url": "https://github.com/TrussC-org/tcxOpenCV.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxAruco",
+      "url": "https://github.com/TrussC-org/tcxAruco.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxNDI",
+      "url": "https://github.com/TrussC-org/tcxNDI.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxTcv",
+      "url": "https://github.com/TrussC-org/tcxTcv.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxIME",
+      "url": "https://github.com/tettou771/tcxIME.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxExiv2",
+      "url": "https://github.com/tettou771/tcxExiv2.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxLibRaw",
+      "url": "https://github.com/tettou771/tcxLibRaw.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxCrow",
+      "url": "https://github.com/tettou771/tcxCrow.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    },
+    {
+      "name": "tcxPave",
+      "url": "https://github.com/tettou771/tcxPave.git",
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "",
+      "author": "",
+      "license": "",
+      "trussc_version": "",
+      "screenshot": "",
+      "keywords": []
+    }
+  ]
+}
