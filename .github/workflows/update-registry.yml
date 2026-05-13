@@ -57,7 +57,7 @@ jobs:
             NAME=$(echo "$row" | jq -r '.name')
             FULL=$(echo "$row" | jq -r '.full_name')
 
-            CODE=$(curl -sf -o /dev/null -w '%{http_code}' "${URL}/raw/HEAD/addon.json" || echo 000)
+            CODE=$(curl -sfL -o /dev/null -w '%{http_code}' "${URL}/raw/HEAD/addon.json" || echo 000)
             if [ "$CODE" = "200" ]; then
               echo "  ✓ ${FULL}"
               ENTRY=$(jq -nc --arg name "$NAME" --arg url "$URL" '{name:$name, url:$url}')
@@ -78,14 +78,32 @@ jobs:
       - name: Update addons_list.json if changed
         run: |
           set -e
+          NEW_COUNT=$(jq '. | length' _valid.json)
+          OLD_COUNT=$(jq '.addons | length' addons_list.json)
+
+          # Safety floor: refuse to overwrite the list with a catastrophic drop.
+          # This guards against transient GitHub Search indexing delays and other
+          # search-side outages from wiping the registry. The cron will retry
+          # daily; a true mass-removal can still be applied via a maintainer's
+          # workflow_dispatch run after manual review.
+          if [ "$OLD_COUNT" -gt 0 ] && [ "$NEW_COUNT" = 0 ]; then
+            echo "::warning::Discovery returned 0 addons but list has $OLD_COUNT — skipping update (likely GitHub Search indexing lag)."
+            exit 0
+          fi
+          if [ "$OLD_COUNT" -gt 1 ] && [ "$NEW_COUNT" -lt "$((OLD_COUNT / 2))" ]; then
+            echo "::warning::Discovery returned $NEW_COUNT addons but list has $OLD_COUNT (>50% drop) — skipping update."
+            echo "::warning::If this drop is intentional, re-run the workflow manually."
+            exit 0
+          fi
+
           # Merge into existing addons_list.json structure.
           jq --slurpfile new _valid.json '.addons = $new[0]' addons_list.json > _list_new.json
           mv _list_new.json addons_list.json
 
           if git diff --quiet -- addons_list.json; then
-            echo "addons_list.json unchanged"
+            echo "addons_list.json unchanged ($NEW_COUNT addons)"
           else
-            echo "addons_list.json changed:"
+            echo "addons_list.json changed ($OLD_COUNT -> $NEW_COUNT):"
             git --no-pager diff -- addons_list.json
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -180,7 +198,7 @@ jobs:
             URL=$(echo "$row"  | jq -r '.url')
             echo "  fetching $NAME ($URL)..."
 
-            METADATA=$(curl -sf "${URL}/raw/HEAD/addon.json" || echo '{}')
+            METADATA=$(curl -sfL "${URL}/raw/HEAD/addon.json" || echo '{}')
             LATEST_TAG=$(git ls-remote --tags --sort=-v:refname "$URL" 2>/dev/null \
               | head -1 | sed 's/.*refs\/tags\///' | sed 's/\^{}//')
 
@@ -220,7 +238,7 @@ jobs:
           done
 
           # Sort: bundled first, then alphabetical.
-          jq 'sort_by(.bundled | not, .name)' _entries.json > _entries_sorted.json
+          jq 'sort_by((.bundled | not), .name)' _entries.json > _entries_sorted.json
           mv _entries_sorted.json _entries.json
 
           # Wrap in registry envelope.
