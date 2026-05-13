@@ -5,14 +5,6 @@
       "url": "https://github.com/TrussC-org/tcxAruco"
     },
     {
-      "name": "tcxCrow",
-      "url": "https://github.com/tettou771/tcxCrow"
-    },
-    {
-      "name": "tcxExiv2",
-      "url": "https://github.com/tettou771/tcxExiv2"
-    },
-    {
       "name": "tcxGPT",
       "url": "https://github.com/TrussC-org/tcxGPT"
     },
@@ -21,16 +13,20 @@
       "url": "https://github.com/tettou771/tcxIME"
     },
     {
-      "name": "tcxLibRaw",
-      "url": "https://github.com/tettou771/tcxLibRaw"
+      "name": "tcxJuliaCxxWrap",
+      "url": "https://github.com/funatsufumiya/tcxJuliaCxxWrap"
+    },
+    {
+      "name": "tcxLua",
+      "url": "https://github.com/funatsufumiya/tcxLua"
+    },
+    {
+      "name": "tcxMQTT",
+      "url": "https://github.com/tettou771/tcxMQTT"
     },
     {
       "name": "tcxOpenCV",
       "url": "https://github.com/TrussC-org/tcxOpenCV"
-    },
-    {
-      "name": "tcxTcv",
-      "url": "https://github.com/TrussC-org/tcxTcv"
     }
   ]
 }
