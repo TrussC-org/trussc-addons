@@ -14,85 +14,242 @@ jobs:
   build-registry:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout trussc-addons
+        uses: actions/checkout@v4
+
+      - name: Discover addons via topic search
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          echo "Searching GitHub for repos with topic 'trussc-addon'..."
+
+          # Fetch all matching repos (paginate to handle >100 results in the future).
+          # Forks are included on purpose: GitHub topics are not inherited, so a fork
+          # only appears here if the forker explicitly added the topic.
+          gh api -X GET search/repositories \
+            -f q='topic:trussc-addon fork:true' \
+            -f per_page=100 \
+            --paginate \
+            --jq '.items[] | {name, full_name, html_url, archived, private, fork}' \
+            > _raw.jsonl
+
+          echo ""
+          echo "Raw matches: $(wc -l < _raw.jsonl)"
+
+          # Filter:
+          #   - not archived
+          #   - not private (search shouldn't return private, but be defensive)
+          #   - name matches ^tcx[A-Z]
+          jq -s '
+            map(select(.archived == false and .private == false))
+            | map(select(.name | test("^tcx[A-Z]")))
+          ' _raw.jsonl > _filtered.json
+
+          echo "After name/archive filter: $(jq '. | length' _filtered.json)"
+
+          # Check addon.json existence (HEAD request to raw URL).
+          # Any repo without addon.json is dropped — presence is required as
+          # an opt-in marker.
+          echo '[]' > _valid.json
+          for row in $(jq -c '.[]' _filtered.json); do
+            URL=$(echo "$row" | jq -r '.html_url')
+            NAME=$(echo "$row" | jq -r '.name')
+            FULL=$(echo "$row" | jq -r '.full_name')
+
+            CODE=$(curl -sf -o /dev/null -w '%{http_code}' "${URL}/raw/HEAD/addon.json" || echo 000)
+            if [ "$CODE" = "200" ]; then
+              echo "  ✓ ${FULL}"
+              ENTRY=$(jq -nc --arg name "$NAME" --arg url "$URL" '{name:$name, url:$url}')
+              jq --argjson e "$ENTRY" '. + [$e]' _valid.json > _valid.tmp
+              mv _valid.tmp _valid.json
+            else
+              echo "  ✗ ${FULL} (addon.json missing, HTTP $CODE)"
+            fi
+          done
+
+          # Sort by name for stable diffs in addons_list.json.
+          jq 'sort_by(.name)' _valid.json > _valid_sorted.json
+          mv _valid_sorted.json _valid.json
+
+          echo ""
+          echo "Discovered $(jq '. | length' _valid.json) valid third-party addons"
+
+      - name: Update addons_list.json if changed
+        run: |
+          set -e
+          # Merge into existing addons_list.json structure.
+          jq --slurpfile new _valid.json '.addons = $new[0]' addons_list.json > _list_new.json
+          mv _list_new.json addons_list.json
+
+          if git diff --quiet -- addons_list.json; then
+            echo "addons_list.json unchanged"
+          else
+            echo "addons_list.json changed:"
+            git --no-pager diff -- addons_list.json
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add addons_list.json
+            git commit -m "chore: auto-update addons_list.json from topic search"
+            git push origin main
+          fi
+
+      - name: Checkout TrussC (for bundled addons)
+        uses: actions/checkout@v4
+        with:
+          repository: TrussC-org/TrussC
+          path: _trussc
+          ref: main
 
       - name: Build registry.json
         run: |
-          echo "Fetching addon metadata..."
-          REGISTRY='{"last_updated":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","addons":['
-          FIRST=true
+          set -e
+          echo "Building registry.json..."
 
-          for row in $(jq -c '.addons[]' addons_list.json); do
-            NAME=$(echo "$row" | jq -r '.name')
-            URL=$(echo "$row" | jq -r '.url')
+          # Helper: emit a registry entry from a name, url, and a raw addon.json string.
+          # Args: NAME URL BUNDLED METADATA_JSON LATEST_TAG
+          build_entry() {
+            local name="$1" url="$2" bundled="$3" metadata="$4" latest_tag="$5"
 
-            echo "  Checking $NAME ($URL) ..."
+            local version description author license tc_version screenshot demo_url platforms keywords dependencies
+            version=$(echo      "$metadata" | jq -r '.version       // ""')
+            description=$(echo  "$metadata" | jq -r '.description   // ""')
+            author=$(echo       "$metadata" | jq -r '.author        // ""')
+            license=$(echo      "$metadata" | jq -r '.license       // ""')
+            tc_version=$(echo   "$metadata" | jq -r '.trussc_version // ""')
+            screenshot=$(echo   "$metadata" | jq -r '.screenshot    // ""')
+            demo_url=$(echo     "$metadata" | jq -r '.demo_url      // ""')
+            platforms=$(echo    "$metadata" | jq -c '.platforms     // []')
+            keywords=$(echo     "$metadata" | jq -c '.keywords      // []')
+            dependencies=$(echo "$metadata" | jq -c '.dependencies  // []')
 
-            # Fetch addon.json from default branch (all fields optional)
-            RAW_URL="${URL}/raw/HEAD/addon.json"
-            METADATA=$(curl -sf "$RAW_URL" || echo '{}')
-
-            # Extract fields from addon.json (version is the developer's self-reported value)
-            VERSION=$(echo "$METADATA" | jq -r '.version // ""')
-            DESCRIPTION=$(echo "$METADATA" | jq -r '.description // ""')
-            AUTHOR=$(echo "$METADATA" | jq -r '.author // ""')
-            LICENSE=$(echo "$METADATA" | jq -r '.license // ""')
-            TC_VERSION=$(echo "$METADATA" | jq -r '.trussc_version // ""')
-            SCREENSHOT=$(echo "$METADATA" | jq -r '.screenshot // ""')
-            KEYWORDS=$(echo "$METADATA" | jq -c '.keywords // []')
-
-            # Resolve relative screenshot path to absolute URL
-            if [ -n "$SCREENSHOT" ] && [[ ! "$SCREENSHOT" =~ ^https?:// ]]; then
-              SCREENSHOT="${URL}/raw/HEAD/${SCREENSHOT}"
+            # Resolve relative screenshot path to absolute raw URL.
+            if [ -n "$screenshot" ] && [[ ! "$screenshot" =~ ^https?:// ]]; then
+              if [ "$bundled" = "true" ]; then
+                screenshot="https://github.com/TrussC-org/TrussC/raw/main/addons/${name}/${screenshot}"
+              else
+                screenshot="${url}/raw/HEAD/${screenshot}"
+              fi
             fi
 
-            # Get latest git tag as a separate field
+            # Fallback: if no version, use latest tag.
+            if [ -z "$version" ]; then
+              version="${latest_tag:-unknown}"
+            fi
+
+            jq -nc \
+              --arg name "$name" \
+              --arg url "$url" \
+              --argjson bundled "$bundled" \
+              --arg version "$version" \
+              --arg latest_tag "$latest_tag" \
+              --arg description "$description" \
+              --arg author "$author" \
+              --arg license "$license" \
+              --arg trussc_version "$tc_version" \
+              --arg screenshot "$screenshot" \
+              --arg demo_url "$demo_url" \
+              --argjson platforms "$platforms" \
+              --argjson keywords "$keywords" \
+              --argjson dependencies "$dependencies" \
+              '{
+                name: $name,
+                url: $url,
+                bundled: $bundled,
+                version: $version,
+                latest_tag: $latest_tag,
+                description: $description,
+                author: $author,
+                license: $license,
+                trussc_version: $trussc_version,
+                screenshot: $screenshot,
+                demo_url: $demo_url,
+                platforms: $platforms,
+                keywords: $keywords,
+                dependencies: $dependencies
+              }'
+          }
+
+          echo '[]' > _entries.json
+
+          # Third-party addons (from addons_list.json).
+          echo ""
+          echo "Third-party addons:"
+          for row in $(jq -c '.addons[]' addons_list.json); do
+            NAME=$(echo "$row" | jq -r '.name')
+            URL=$(echo "$row"  | jq -r '.url')
+            echo "  fetching $NAME ($URL)..."
+
+            METADATA=$(curl -sf "${URL}/raw/HEAD/addon.json" || echo '{}')
             LATEST_TAG=$(git ls-remote --tags --sort=-v:refname "$URL" 2>/dev/null \
               | head -1 | sed 's/.*refs\/tags\///' | sed 's/\^{}//')
 
-            # If addon.json has no version, fall back to latest tag
-            if [ -z "$VERSION" ]; then
-              VERSION="${LATEST_TAG:-unknown}"
-            fi
-
-            # Build entry
-            if [ "$FIRST" = true ]; then
-              FIRST=false
-            else
-              REGISTRY="$REGISTRY,"
-            fi
-            ENTRY=$(jq -nc \
-              --arg name "$NAME" \
-              --arg url "${URL}.git" \
-              --arg version "$VERSION" \
-              --arg latest_tag "$LATEST_TAG" \
-              --arg description "$DESCRIPTION" \
-              --arg author "$AUTHOR" \
-              --arg license "$LICENSE" \
-              --arg trussc_version "$TC_VERSION" \
-              --arg screenshot "$SCREENSHOT" \
-              --argjson keywords "$KEYWORDS" \
-              '{name:$name, url:$url, version:$version, latest_tag:$latest_tag, description:$description, author:$author, license:$license, trussc_version:$trussc_version, screenshot:$screenshot, keywords:$keywords}')
-            REGISTRY="$REGISTRY$ENTRY"
+            ENTRY=$(build_entry "$NAME" "${URL}.git" "false" "$METADATA" "$LATEST_TAG")
+            jq --argjson e "$ENTRY" '. + [$e]' _entries.json > _entries.tmp
+            mv _entries.tmp _entries.json
           done
 
-          REGISTRY="$REGISTRY]}"
-
-          # Pretty-print and strip empty fields for cleaner output
-          echo "$REGISTRY" | jq '.' > registry.json
+          # Bundled addons (from TrussC repo's addons/ folder).
           echo ""
-          echo "Generated registry.json with $(jq '.addons | length' registry.json) addons"
-          cat registry.json
+          echo "Bundled addons:"
+          TRUSSC_URL='https://github.com/TrussC-org/TrussC'
+          for dir in _trussc/addons/*/; do
+            [ -d "$dir" ] || continue
+            NAME=$(basename "$dir")
+            # Only include directories matching tcx[A-Z]...
+            if ! [[ "$NAME" =~ ^tcx[A-Z] ]]; then
+              echo "  skipping $NAME (name doesn't match tcx[A-Z]...)"
+              continue
+            fi
+
+            URL="${TRUSSC_URL}/tree/main/addons/${NAME}"
+            if [ -f "${dir}addon.json" ]; then
+              METADATA=$(cat "${dir}addon.json")
+              echo "  reading $NAME"
+            else
+              METADATA='{}'
+              echo "  reading $NAME (no addon.json, using empty metadata)"
+            fi
+
+            # Bundled addons don't have an independent version; use TrussC's tag.
+            LATEST_TAG=$(cd _trussc && git describe --tags --abbrev=0 2>/dev/null || echo '')
+
+            ENTRY=$(build_entry "$NAME" "$URL" "true" "$METADATA" "$LATEST_TAG")
+            jq --argjson e "$ENTRY" '. + [$e]' _entries.json > _entries.tmp
+            mv _entries.tmp _entries.json
+          done
+
+          # Sort: bundled first, then alphabetical.
+          jq 'sort_by(.bundled | not, .name)' _entries.json > _entries_sorted.json
+          mv _entries_sorted.json _entries.json
+
+          # Wrap in registry envelope.
+          jq -n \
+            --arg last_updated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --slurpfile addons _entries.json \
+            '{last_updated: $last_updated, addons: $addons[0]}' \
+            > registry.json
+
+          echo ""
+          echo "Generated registry.json:"
+          echo "  total: $(jq '.addons | length' registry.json)"
+          echo "  bundled: $(jq '[.addons[] | select(.bundled)] | length' registry.json)"
+          echo "  third-party: $(jq '[.addons[] | select(.bundled | not)] | length' registry.json)"
 
       - name: Deploy to gh-pages
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # Stash registry.json before switching branches.
           cp registry.json /tmp/registry.json
 
+          # Build a fresh gh-pages branch from scratch (orphan) so it stays small.
           git checkout --orphan gh-pages-tmp
-          git rm -rf .
+          git rm -rf . >/dev/null 2>&1 || true
+          # Remove any leftover working-tree artifacts from previous steps.
+          rm -rf _trussc _raw.jsonl _filtered.json _valid.json _entries.json
           cp /tmp/registry.json registry.json
           git add registry.json
           git commit -m "Update registry $(date -u +%Y-%m-%dT%H:%M:%SZ)"
