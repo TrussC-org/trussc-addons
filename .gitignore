@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Workflow scratch files (created in CI)
+_raw.jsonl
+_filtered.json
+_valid.json
+_entries.json
+_trussc/
