@@ -129,20 +129,33 @@ jobs:
           # OWNER is the GitHub user/org for third-party addons (empty for bundled).
           # Consumers display non-bundled addons as "owner/name" to disambiguate
           # name collisions (e.g. bundled tcxLua vs funatsufumiya/tcxLua).
+          # Valid category set. Unknown / empty -> "misc". Keep in sync with
+          # docs/ADDONS.md "Categories" table in the TrussC repo.
+          CATEGORIES='["3d","ai","algorithms","animation","bridges","computer-vision","game","graphics","gui","hardware","machine-learning","network","physics","sound","typography","utilities","video","web","misc"]'
+
           build_entry() {
             local name="$1" owner="$2" url="$3" bundled="$4" metadata="$5" latest_tag="$6"
 
-            local version description author license tc_version screenshot demo_url platforms keywords dependencies
+            local version description author license tc_version category screenshot demo_url platforms keywords dependencies
             version=$(echo      "$metadata" | jq -r '.version       // ""')
             description=$(echo  "$metadata" | jq -r '.description   // ""')
             author=$(echo       "$metadata" | jq -r '.author        // ""')
             license=$(echo      "$metadata" | jq -r '.license       // ""')
             tc_version=$(echo   "$metadata" | jq -r '.trussc_version // ""')
+            category=$(echo     "$metadata" | jq -r '.category      // ""')
             screenshot=$(echo   "$metadata" | jq -r '.screenshot    // ""')
             demo_url=$(echo     "$metadata" | jq -r '.demo_url      // ""')
             platforms=$(echo    "$metadata" | jq -c '.platforms     // []')
             keywords=$(echo     "$metadata" | jq -c '.keywords      // []')
             dependencies=$(echo "$metadata" | jq -c '.dependencies  // []')
+
+            # Validate category: unknown / empty -> "misc" (with a warning).
+            if ! echo "$CATEGORIES" | jq -e --arg c "$category" 'index($c) != null' >/dev/null; then
+              if [ -n "$category" ]; then
+                echo "::warning::Addon ${name}: unknown category '${category}', falling back to 'misc'"
+              fi
+              category="misc"
+            fi
 
             # Resolve relative screenshot path to absolute raw URL.
             if [ -n "$screenshot" ] && [[ ! "$screenshot" =~ ^https?:// ]]; then
@@ -169,6 +182,7 @@ jobs:
               --arg author "$author" \
               --arg license "$license" \
               --arg trussc_version "$tc_version" \
+              --arg category "$category" \
               --arg screenshot "$screenshot" \
               --arg demo_url "$demo_url" \
               --argjson platforms "$platforms" \
@@ -185,6 +199,7 @@ jobs:
                 author: $author,
                 license: $license,
                 trussc_version: $trussc_version,
+                category: $category,
                 screenshot: $screenshot,
                 demo_url: $demo_url,
                 platforms: $platforms,
