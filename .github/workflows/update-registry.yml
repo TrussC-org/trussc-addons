@@ -125,9 +125,12 @@ jobs:
           echo "Building registry.json..."
 
           # Helper: emit a registry entry from a name, url, and a raw addon.json string.
-          # Args: NAME URL BUNDLED METADATA_JSON LATEST_TAG
+          # Args: NAME OWNER URL BUNDLED METADATA_JSON LATEST_TAG
+          # OWNER is the GitHub user/org for third-party addons (empty for bundled).
+          # Consumers display non-bundled addons as "owner/name" to disambiguate
+          # name collisions (e.g. bundled tcxLua vs funatsufumiya/tcxLua).
           build_entry() {
-            local name="$1" url="$2" bundled="$3" metadata="$4" latest_tag="$5"
+            local name="$1" owner="$2" url="$3" bundled="$4" metadata="$5" latest_tag="$6"
 
             local version description author license tc_version screenshot demo_url platforms keywords dependencies
             version=$(echo      "$metadata" | jq -r '.version       // ""')
@@ -157,6 +160,7 @@ jobs:
 
             jq -nc \
               --arg name "$name" \
+              --arg owner "$owner" \
               --arg url "$url" \
               --argjson bundled "$bundled" \
               --arg version "$version" \
@@ -172,6 +176,7 @@ jobs:
               --argjson dependencies "$dependencies" \
               '{
                 name: $name,
+                owner: $owner,
                 url: $url,
                 bundled: $bundled,
                 version: $version,
@@ -196,13 +201,15 @@ jobs:
           for row in $(jq -c '.addons[]' addons_list.json); do
             NAME=$(echo "$row" | jq -r '.name')
             URL=$(echo "$row"  | jq -r '.url')
-            echo "  fetching $NAME ($URL)..."
+            # Parse owner from URL: https://github.com/<owner>/<repo>
+            OWNER=$(echo "$URL" | sed -E 's|^https?://[^/]+/([^/]+)/.*|\1|')
+            echo "  fetching $OWNER/$NAME ($URL)..."
 
             METADATA=$(curl -sfL "${URL}/raw/HEAD/addon.json" || echo '{}')
             LATEST_TAG=$(git ls-remote --tags --sort=-v:refname "$URL" 2>/dev/null \
               | head -1 | sed 's/.*refs\/tags\///' | sed 's/\^{}//')
 
-            ENTRY=$(build_entry "$NAME" "${URL}.git" "false" "$METADATA" "$LATEST_TAG")
+            ENTRY=$(build_entry "$NAME" "$OWNER" "${URL}.git" "false" "$METADATA" "$LATEST_TAG")
             jq --argjson e "$ENTRY" '. + [$e]' _entries.json > _entries.tmp
             mv _entries.tmp _entries.json
           done
@@ -232,7 +239,8 @@ jobs:
             # Bundled addons don't have an independent version; use TrussC's tag.
             LATEST_TAG=$(cd _trussc && git describe --tags --abbrev=0 2>/dev/null || echo '')
 
-            ENTRY=$(build_entry "$NAME" "$URL" "true" "$METADATA" "$LATEST_TAG")
+            # Bundled addons have no owner — display as plain "tcxFoo".
+            ENTRY=$(build_entry "$NAME" "" "$URL" "true" "$METADATA" "$LATEST_TAG")
             jq --argjson e "$ENTRY" '. + [$e]' _entries.json > _entries.tmp
             mv _entries.tmp _entries.json
           done
