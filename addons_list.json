@@ -13,10 +13,6 @@
       "url": "https://github.com/tettou771/tcxIME"
     },
     {
-      "name": "tcxJuliaCxxWrap",
-      "url": "https://github.com/funatsufumiya/tcxJuliaCxxWrap"
-    },
-    {
       "name": "tcxLua",
       "url": "https://github.com/funatsufumiya/tcxLua"
     },
@@ -31,6 +27,10 @@
     {
       "name": "tcxOscJlWrap",
       "url": "https://github.com/funatsufumiya/tcxOscJlWrap"
+    },
+    {
+      "name": "tcxZZJuliaCxxWrap",
+      "url": "https://github.com/funatsufumiya/tcxZZJuliaCxxWrap"
     }
   ]
 }
