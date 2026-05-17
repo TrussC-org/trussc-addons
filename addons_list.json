@@ -27,6 +27,10 @@
     {
       "name": "tcxOpenCV",
       "url": "https://github.com/TrussC-org/tcxOpenCV"
+    },
+    {
+      "name": "tcxOscJlWrap",
+      "url": "https://github.com/funatsufumiya/tcxOscJlWrap"
     }
   ]
 }
