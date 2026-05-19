@@ -1,0 +1,462 @@
+{
+  "last_updated": "2026-05-19T15:37:54Z",
+  "addons": [
+    {
+      "name": "tcxBox2d",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxBox2d",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "2D physics engine (Box2D)",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "physics",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "physics",
+        "2d",
+        "collision",
+        "simulation"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxCurl",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxCurl",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "HTTPS client (libcurl)",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "network",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "http",
+        "https",
+        "ssl",
+        "network"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxGltf",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxGltf",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "glTF 2.0 / GLB model loader (cgltf)",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "3d",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "gltf",
+        "glb",
+        "3d",
+        "model",
+        "pbr"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxHap",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxHap",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "Hap video codec for fast GPU playback",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "video",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "video",
+        "codec",
+        "gpu",
+        "hap"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxImGui",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxImGui",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "Dear ImGui integration",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "gui",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "gui",
+        "imgui",
+        "ui",
+        "debug"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxLua",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxLua",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "Lua binding",
+      "author": "Fumiya Funatsu",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "bridges",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "language"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxLut",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxLut",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "3D LUT color grading",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "graphics",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "color",
+        "lut",
+        "grading",
+        "shader"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxObj",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxObj",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "Wavefront OBJ model import/export",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "3d",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "obj",
+        "wavefront",
+        "3d",
+        "model",
+        "mesh"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxOsc",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxOsc",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "OSC (Open Sound Control) protocol",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "network",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "osc",
+        "network",
+        "sound",
+        "control"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxQuadWarp",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxQuadWarp",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "Quad warp / projection mapping",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "graphics",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "projection",
+        "mapping",
+        "warp"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxTls",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxTls",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "TLS/SSL support (mbedTLS)",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "network",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "tls",
+        "ssl",
+        "security",
+        "network"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxWebSocket",
+      "owner": "",
+      "url": "https://github.com/TrussC-org/TrussC/tree/main/addons/tcxWebSocket",
+      "bundled": true,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "WebSocket client and server",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "network",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "websocket",
+        "network",
+        "server"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxAruco",
+      "owner": "TrussC-org",
+      "url": "https://github.com/TrussC-org/tcxAruco.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "ArUco marker detection (OpenCV-based)",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "computer-vision",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "aruco",
+        "marker",
+        "tracking",
+        "ar"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxGPT",
+      "owner": "TrussC-org",
+      "url": "https://github.com/TrussC-org/tcxGPT.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "OpenAI ChatGPT API client",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "ai",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "openai",
+        "gpt",
+        "llm",
+        "ai"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxIME",
+      "owner": "tettou771",
+      "url": "https://github.com/tettou771/tcxIME.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "IME (Input Method Editor) support for non-Latin text input",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "gui",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [
+        "macos",
+        "win"
+      ],
+      "keywords": [
+        "ime",
+        "japanese",
+        "input",
+        "text"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxLua",
+      "owner": "funatsufumiya",
+      "url": "https://github.com/funatsufumiya/tcxLua.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "Lua binding",
+      "author": "Fumiya Funatsu",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "misc",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "language"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxMQTT",
+      "owner": "tettou771",
+      "url": "https://github.com/tettou771/tcxMQTT.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "MQTT 3.1.1 client (lwmqtt + TrussC TcpClient). Sync polling and async Event<T> patterns both supported. MQTTS via tcxTls + setTransport.",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "network",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "mqtt",
+        "network",
+        "iot",
+        "pubsub",
+        "broker",
+        "tls"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxOpenCV",
+      "owner": "TrussC-org",
+      "url": "https://github.com/TrussC-org/tcxOpenCV.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "OpenCV integration for computer vision",
+      "author": "tettou771",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "computer-vision",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "opencv",
+        "computer-vision",
+        "image-processing"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tcxOscJlWrap",
+      "owner": "funatsufumiya",
+      "url": "https://github.com/funatsufumiya/tcxOscJlWrap.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "tcxOsc Julia binding using CxxWrap.jl",
+      "author": "Fumiya Funatsu",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "misc",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "language"
+      ],
+      "dependencies": [
+        "tcxOsc"
+      ]
+    },
+    {
+      "name": "tcxZZJuliaCxxWrap",
+      "owner": "funatsufumiya",
+      "url": "https://github.com/funatsufumiya/tcxZZJuliaCxxWrap.git",
+      "bundled": false,
+      "version": "unknown",
+      "latest_tag": "",
+      "description": "TrussC Julia CxxWrap.jl binding generator",
+      "author": "Fumiya Funatsu",
+      "license": "MIT",
+      "trussc_version": "",
+      "category": "misc",
+      "screenshot": "",
+      "demo_url": "",
+      "platforms": [],
+      "keywords": [
+        "language"
+      ],
+      "dependencies": [
+        "tcxHap",
+        "tcxOsc"
+      ]
+    }
+  ]
+}
