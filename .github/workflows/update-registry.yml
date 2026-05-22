@@ -31,11 +31,19 @@ jobs:
             -f q='topic:trussc-addon fork:true' \
             -f per_page=100 \
             --paginate \
-            --jq '.items[] | {name, full_name, html_url, archived, private, fork}' \
+            --jq '.items[] | {name, full_name, html_url, archived, private, fork, stargazers_count}' \
             > _raw.jsonl
 
           echo ""
           echo "Raw matches: $(wc -l < _raw.jsonl)"
+
+          # Star counts come free in the search response. Persist a
+          # html_url -> stargazers_count map for the registry build step to
+          # look up. Stars live only in registry.json (gh-pages), never in
+          # addons_list.json (main) — so star changes don't churn the
+          # human-meaningful name/url list.
+          jq -s 'map({key: .html_url, value: .stargazers_count}) | from_entries' \
+            _raw.jsonl > _stars.json
 
           # Filter:
           #   - not archived
@@ -125,7 +133,7 @@ jobs:
           echo "Building registry.json..."
 
           # Helper: emit a registry entry from a name, url, and a raw addon.json string.
-          # Args: NAME OWNER URL BUNDLED METADATA_JSON LATEST_TAG
+          # Args: NAME OWNER URL BUNDLED METADATA_JSON LATEST_TAG STARS
           # OWNER is the GitHub user/org for third-party addons (empty for bundled).
           # Consumers display non-bundled addons as "owner/name" to disambiguate
           # name collisions (e.g. bundled tcxLua vs funatsufumiya/tcxLua).
@@ -134,7 +142,7 @@ jobs:
           CATEGORIES='["3d","ai","algorithms","animation","bridges","computer-vision","game","graphics","gui","hardware","machine-learning","network","physics","sound","typography","utilities","video","web","misc"]'
 
           build_entry() {
-            local name="$1" owner="$2" url="$3" bundled="$4" metadata="$5" latest_tag="$6"
+            local name="$1" owner="$2" url="$3" bundled="$4" metadata="$5" latest_tag="$6" stars="${7:-0}"
 
             local version description author license tc_version category screenshot demo_url platforms keywords dependencies
             version=$(echo      "$metadata" | jq -r '.version       // ""')
@@ -188,6 +196,7 @@ jobs:
               --argjson platforms "$platforms" \
               --argjson keywords "$keywords" \
               --argjson dependencies "$dependencies" \
+              --argjson stars "$stars" \
               '{
                 name: $name,
                 owner: $owner,
@@ -204,7 +213,8 @@ jobs:
                 demo_url: $demo_url,
                 platforms: $platforms,
                 keywords: $keywords,
-                dependencies: $dependencies
+                dependencies: $dependencies,
+                stars: $stars
               }'
           }
 
@@ -223,8 +233,10 @@ jobs:
             METADATA=$(curl -sfL "${URL}/raw/HEAD/addon.json" || echo '{}')
             LATEST_TAG=$(git ls-remote --tags --sort=-v:refname "$URL" 2>/dev/null \
               | head -1 | sed 's/.*refs\/tags\///' | sed 's/\^{}//')
+            # Stars from the topic-search sidecar (keyed by html_url).
+            STARS=$(jq -r --arg u "$URL" '.[$u] // 0' _stars.json)
 
-            ENTRY=$(build_entry "$NAME" "$OWNER" "${URL}.git" "false" "$METADATA" "$LATEST_TAG")
+            ENTRY=$(build_entry "$NAME" "$OWNER" "${URL}.git" "false" "$METADATA" "$LATEST_TAG" "$STARS")
             jq --argjson e "$ENTRY" '. + [$e]' _entries.json > _entries.tmp
             mv _entries.tmp _entries.json
           done
