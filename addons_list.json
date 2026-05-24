@@ -27,6 +27,10 @@
     {
       "name": "tcxOscJlWrap",
       "url": "https://github.com/funatsufumiya/tcxOscJlWrap"
+    },
+    {
+      "name": "tcxZZJuliaCxxWrap",
+      "url": "https://github.com/funatsufumiya/tcxZZJuliaCxxWrap"
     }
   ]
 }
