@@ -13,24 +13,12 @@
       "url": "https://github.com/tettou771/tcxIME"
     },
     {
-      "name": "tcxLua",
-      "url": "https://github.com/funatsufumiya/tcxLua"
-    },
-    {
       "name": "tcxMQTT",
       "url": "https://github.com/tettou771/tcxMQTT"
     },
     {
       "name": "tcxOpenCV",
       "url": "https://github.com/TrussC-org/tcxOpenCV"
-    },
-    {
-      "name": "tcxOscJlWrap",
-      "url": "https://github.com/funatsufumiya/tcxOscJlWrap"
-    },
-    {
-      "name": "tcxZZJuliaCxxWrap",
-      "url": "https://github.com/funatsufumiya/tcxZZJuliaCxxWrap"
     }
   ]
 }
