@@ -165,12 +165,14 @@ jobs:
               category="misc"
             fi
 
-            # Resolve relative screenshot path to absolute raw URL.
+            # Resolve relative screenshot path to absolute raw URL. Strip the
+            # ".git" suffix from the clone url first — GitHub's raw endpoint
+            # (github.com/<owner>/<repo>/raw/HEAD/...) 404s on a ".git" path.
             if [ -n "$screenshot" ] && [[ ! "$screenshot" =~ ^https?:// ]]; then
               if [ "$bundled" = "true" ]; then
                 screenshot="https://github.com/TrussC-org/TrussC/raw/main/addons/${name}/${screenshot}"
               else
-                screenshot="${url}/raw/HEAD/${screenshot}"
+                screenshot="${url%.git}/raw/HEAD/${screenshot}"
               fi
             fi
 
