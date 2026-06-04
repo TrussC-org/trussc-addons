@@ -9,6 +9,10 @@
       "url": "https://github.com/TrussC-org/tcxAruco"
     },
     {
+      "name": "tcxAzureKinect",
+      "url": "https://github.com/tettou771/tcxAzureKinect"
+    },
+    {
       "name": "tcxGPT",
       "url": "https://github.com/TrussC-org/tcxGPT"
     },
