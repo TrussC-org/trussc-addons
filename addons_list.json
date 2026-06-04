@@ -1,6 +1,10 @@
 {
   "addons": [
     {
+      "name": "tcxArtnet",
+      "url": "https://github.com/tettou771/tcxArtnet"
+    },
+    {
       "name": "tcxAruco",
       "url": "https://github.com/TrussC-org/tcxAruco"
     },
@@ -23,6 +27,10 @@
     {
       "name": "tcxOpenCV",
       "url": "https://github.com/TrussC-org/tcxOpenCV"
+    },
+    {
+      "name": "tcxPly",
+      "url": "https://github.com/tettou771/tcxPly"
     },
     {
       "name": "tcxSyphon",
