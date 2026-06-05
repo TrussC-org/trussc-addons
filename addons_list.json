@@ -33,6 +33,10 @@
       "url": "https://github.com/TrussC-org/tcxOpenCV"
     },
     {
+      "name": "tcxPhysics",
+      "url": "https://github.com/tettou771/tcxPhysics"
+    },
+    {
       "name": "tcxPly",
       "url": "https://github.com/tettou771/tcxPly"
     },
