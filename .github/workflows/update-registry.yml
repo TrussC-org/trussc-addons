@@ -158,9 +158,12 @@ jobs:
             dependencies=$(echo "$metadata" | jq -c '.dependencies  // []')
 
             # Validate category: unknown / empty -> "misc" (with a warning).
+            # NOTE: this function's stdout IS the entry JSON (captured by the
+            # caller), so the warning MUST go to stderr — otherwise it pollutes
+            # the JSON and crashes the whole registry build.
             if ! echo "$CATEGORIES" | jq -e --arg c "$category" 'index($c) != null' >/dev/null; then
               if [ -n "$category" ]; then
-                echo "::warning::Addon ${name}: unknown category '${category}', falling back to 'misc'"
+                echo "::warning::Addon ${name}: unknown category '${category}', falling back to 'misc'" >&2
               fi
               category="misc"
             fi
