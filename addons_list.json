@@ -51,6 +51,10 @@
     {
       "name": "tcxSyphon",
       "url": "https://github.com/tettou771/tcxSyphon"
+    },
+    {
+      "name": "tcxVoronoi",
+      "url": "https://github.com/tettou771/tcxVoronoi"
     }
   ]
 }
