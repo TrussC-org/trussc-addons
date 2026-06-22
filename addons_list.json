@@ -33,6 +33,10 @@
       "url": "https://github.com/tettou771/tcxMQTT"
     },
     {
+      "name": "tcxNatNet",
+      "url": "https://github.com/icq4ever/tcxNatNet"
+    },
+    {
       "name": "tcxOpenCV",
       "url": "https://github.com/TrussC-org/tcxOpenCV"
     },
@@ -47,6 +51,10 @@
     {
       "name": "tcxPly",
       "url": "https://github.com/tettou771/tcxPly"
+    },
+    {
+      "name": "tcxQTMRT",
+      "url": "https://github.com/icq4ever/tcxQTMRT"
     },
     {
       "name": "tcxSyphon",
