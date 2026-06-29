@@ -13,6 +13,10 @@
       "url": "https://github.com/tettou771/tcxAzureKinect"
     },
     {
+      "name": "tcxAzureKinectBodyTracking",
+      "url": "https://github.com/icq4ever/tcxAzureKinectBodyTracking"
+    },
+    {
       "name": "tcxGPT",
       "url": "https://github.com/TrussC-org/tcxGPT"
     },
