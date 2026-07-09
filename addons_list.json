@@ -29,12 +29,20 @@
       "url": "https://github.com/tettou771/tcxGlitch"
     },
     {
+      "name": "tcxIME",
+      "url": "https://github.com/tettou771/tcxIME"
+    },
+    {
       "name": "tcxMQTT",
       "url": "https://github.com/tettou771/tcxMQTT"
     },
     {
       "name": "tcxNatNet",
       "url": "https://github.com/icq4ever/tcxNatNet"
+    },
+    {
+      "name": "tcxOnnx",
+      "url": "https://github.com/tettou771/tcxOnnx"
     },
     {
       "name": "tcxOpenCV",
