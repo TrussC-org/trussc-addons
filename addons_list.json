@@ -17,12 +17,20 @@
       "url": "https://github.com/icq4ever/tcxAzureKinectBodyTracking"
     },
     {
+      "name": "tcxGPT",
+      "url": "https://github.com/TrussC-org/tcxGPT"
+    },
+    {
       "name": "tcxGeo",
       "url": "https://github.com/tettou771/tcxGeo"
     },
     {
       "name": "tcxGlitch",
       "url": "https://github.com/tettou771/tcxGlitch"
+    },
+    {
+      "name": "tcxIME",
+      "url": "https://github.com/tettou771/tcxIME"
     },
     {
       "name": "tcxMQTT",
@@ -55,6 +63,10 @@
     {
       "name": "tcxPly",
       "url": "https://github.com/tettou771/tcxPly"
+    },
+    {
+      "name": "tcxQTMRT",
+      "url": "https://github.com/icq4ever/tcxQTMRT"
     },
     {
       "name": "tcxSyphon",
