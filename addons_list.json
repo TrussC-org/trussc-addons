@@ -45,16 +45,8 @@
       "url": "https://github.com/tettou771/tcxOnnx"
     },
     {
-      "name": "tcxOpenCV",
-      "url": "https://github.com/TrussC-org/tcxOpenCV"
-    },
-    {
       "name": "tcxOpenStreetMap",
       "url": "https://github.com/tettou771/tcxOpenStreetMap"
-    },
-    {
-      "name": "tcxOrbbec",
-      "url": "https://github.com/tettou771/tcxOrbbec"
     },
     {
       "name": "tcxPhysics",
@@ -67,10 +59,6 @@
     {
       "name": "tcxQTMRT",
       "url": "https://github.com/icq4ever/tcxQTMRT"
-    },
-    {
-      "name": "tcxSyphon",
-      "url": "https://github.com/tettou771/tcxSyphon"
     },
     {
       "name": "tcxVoronoi",
