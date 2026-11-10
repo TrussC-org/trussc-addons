@@ -5,10 +5,6 @@
       "url": "https://github.com/tettou771/tcxArtnet"
     },
     {
-      "name": "tcxAruco",
-      "url": "https://github.com/TrussC-org/tcxAruco"
-    },
-    {
       "name": "tcxAzureKinect",
       "url": "https://github.com/tettou771/tcxAzureKinect"
     },
@@ -37,14 +33,6 @@
       "url": "https://github.com/tettou771/tcxJev"
     },
     {
-      "name": "tcxMQTT",
-      "url": "https://github.com/tettou771/tcxMQTT"
-    },
-    {
-      "name": "tcxNatNet",
-      "url": "https://github.com/icq4ever/tcxNatNet"
-    },
-    {
       "name": "tcxOnnx",
       "url": "https://github.com/tettou771/tcxOnnx"
     },
@@ -59,10 +47,6 @@
     {
       "name": "tcxOrbbec",
       "url": "https://github.com/tettou771/tcxOrbbec"
-    },
-    {
-      "name": "tcxPhysics",
-      "url": "https://github.com/tettou771/tcxPhysics"
     },
     {
       "name": "tcxPly",
